@@ -31,3 +31,17 @@ module Display
 
   end
 end
+
+module Functions
+
+end
+
+
+
+def main()
+  include Display
+
+  Display::start_up_screen()
+
+
+end
