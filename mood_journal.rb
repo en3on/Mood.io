@@ -3,7 +3,6 @@ require 'csv'
 require 'pry'
 require 'date'
 
-
 class Journal
   attr_accessor(:journal_entries_arr, :mood_list)
   def initialize
@@ -60,6 +59,7 @@ class Journal
         puts("Press enter to return...")
         gets
       when "6"
+
         p 5
       when "7"
         puts("Thanks for using mood.IO! :)")
