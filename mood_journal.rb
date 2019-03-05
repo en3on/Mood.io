@@ -31,12 +31,17 @@ class Journal
 
       case input
       when "1"
-        # Open interface to allow user to input journal entry and save entry to a var 'journal'
-        journal = get_journal_entry(@mood_list)
-        # Add the journal var to the journal_entries_array that was definied in 'initialize'
-        add_journal_entry_to_arr(journal)
-        # Write the entire journal_entries_arr to disk
-        save_journal_entries_arr_to_disk()
+        if @mood_list.length > 0
+          # Open interface to allow user to input journal entry and save entry to a var 'journal'
+          journal = get_journal_entry(@mood_list)
+          # Add the journal var to the journal_entries_array that was definied in 'initialize'
+          add_journal_entry_to_arr(journal)
+          # Write the entire journal_entries_arr to disk
+          save_journal_entries_arr_to_disk()
+        else
+          puts("There are no moods! Please add some custom moods...")
+          sleep 2
+        end
       when "2"
         # If there are no journal entries, display an error
         if @journal_entries_arr.length > 0
@@ -46,8 +51,7 @@ class Journal
           show_content_of_entry(input) if input != nil
         else
           puts("There are no entries!")
-          puts("Press enter to continue...")
-          gets
+          sleep 1
         end
       when "3"
         # Display journal entry titles to user and allow them to delete a specific entry
@@ -169,7 +173,10 @@ class Journal
       puts "Type your mood:"
       puts
       mood_input = gets().strip
-      @mood_list << mood_input.capitalize
+
+      !@mood_list.include?(mood_input.capitalize) ? @mood_list << mood_input.capitalize : (puts("That mood already exists!")
+                                                                                           sleep 2
+                                                                                          )
     when "2"
       puts `clear`
       view_mood_list(@mood_list)
@@ -293,6 +300,8 @@ class Journal
   def get_most_used_moods()
     mood_hash = {}
 
+    puts `clear`
+
     @journal_entries_arr.each { |journal|
       if mood_hash[journal['mood']] == nil
         mood_hash[journal['mood']] = 1
@@ -300,8 +309,6 @@ class Journal
         mood_hash[journal['mood']] += 1
       end
     }
-
-    puts(mood_hash)
 
     sorted_mood_hash = mood_hash.sort_by { |mood, count| count}.reverse
 
