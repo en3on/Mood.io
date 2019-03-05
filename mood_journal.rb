@@ -1,4 +1,4 @@
-def journal_entry()
+def get_journal_entry()
   print("Title: ")
   title = gets.strip()
 
@@ -15,10 +15,21 @@ def journal_entry()
     lines << input
   end
 
-  journal_entry = {
+  return {
     title: title,
     content: lines 
   }
 
 end
+
+def save_journal_entry_to_disk(journal_entry)
+  content = journal_entry[:content].join(';')
+
+  File.open("journal_entries.csv", "a+").puts("#{journal_entry[:title]},#{content}")
+  File.close
+end
+
+journal_entry = get_journal_entry()
+
+save_journal_entry_to_disk(journal_entry)
 
