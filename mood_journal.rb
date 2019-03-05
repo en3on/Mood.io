@@ -5,15 +5,47 @@ require 'date'
 
 @journal_entries_arr = []
 
+
 def main_menu
-    puts("Welcome to mood.IO")
-    puts("Please select the main following options: ")
-    puts("Press 1 - To add a journal entry")
-    puts("Press 2 - To view your journal entries")
-    puts("Press 3 - To select a mood of your choice and view the the journal entries for that mood")
-    puts("Press 4 - To view all mood list")
-    puts("Press 5 - To view your most used words for each journal entries")
-    puts("Press 6 - Quit mood.IO ")
+lineWidth = 100
+title = "Welcome to mood.IO"
+options = "Please select the main following options: "
+p1 = ("Press 1 - To add a journal entry")
+p2 = ("Press 2 - To view your journal entries")
+p3 = ("Press 3 - To select a mood of your choice and view the the journal entries for that mood")
+p4 = ("Press 4 - To view all mood list")
+p5 = ("Press 5 - To view your most used words for each journal entries")
+p6 = ("Press 6 - Quit mood.IO ")
+puts
+puts
+puts
+sleep 1
+puts title.center(lineWidth)
+puts
+puts
+puts
+print "Loading"
+1.upto(5) do |n|
+    print "."
+    sleep 1 # in second delays the print
+  end
+puts
+puts
+sleep 1
+puts p1.center(lineWidth)
+sleep 1.2
+puts p2.center(lineWidth)
+sleep 1.2
+puts p3.center(lineWidth)
+sleep 1.2
+puts p4.center(lineWidth)
+sleep 1.2
+puts p5.center(lineWidth)
+sleep 1.2
+puts p6.center(lineWidth)
+puts
+puts
+
     user_input = gets().strip.to_i
     while (user_input != 1 && user_input != 2 && user_input != 3 && user_input != 4 && user_input != 5 && user_input != 6)
         puts("Error please select the main following options: ")
@@ -83,7 +115,7 @@ def add_journal_entry_to_arr(journal_entry)
     @journal_entries_arr << row.to_hash
   }
 end
-
+mood_list_arr = ["Happy", "Sad", "Chilled"]
 def custom_mood(mood_list_arr)
     puts("Press 1: To add a mood")
     puts("Press 2: To delete a mood")
@@ -98,17 +130,29 @@ def custom_mood(mood_list_arr)
     end
     if (user_input_custom_mood == 1)
         puts "Type your mood:"
+        arr_one_mood = []
         mood_input = gets().strip.capitalize
+        while (/\d/.match(mood_input) || (/[!@#$%^&*()_+={}\[\]:;'"\/\\?><.,]/).match(mood_input) || ("-").match(mood_input))
+            puts "Incorrect input, Please type your mood again!"
+            mood_input = gets().strip.capitalize
+        end
         mood_list_arr << mood_input
     elsif (user_input_custom_mood == 2)
         puts "Type a mood that you want to delete:"
         puts mood_list_arr
         delete_mood_input = gets().strip.capitalize
+        while (!mood_list_arr.include?(delete_mood_input))
+            puts mood_list_arr
+            puts "Please only type the mood that you want to delete from the list!!!"
+            delete_mood_input = gets().strip.capitalize
+        end
         mood_list_arr.delete(delete_mood_input)
     elsif (user_input_custom_mood == 3)
         puts "home page" 
     end
 end
+custom_mood(mood_list_arr)
+print mood_list_arr
 
 def save_journal_entries_arr_to_disk()
   File.open("journal_entries.csv", "w") do |file|
