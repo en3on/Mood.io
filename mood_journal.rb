@@ -3,11 +3,34 @@ require 'csv'
 require 'pry'
 require 'date'
 
+
 class Journal
   attr_accessor(:journal_entries_arr, :mood_list)
   def initialize
     @journal_entries_arr = []
     @mood_list = []
+  end
+  
+  def title
+    puts
+    puts ("                           _   _____ ____  ")
+    puts ("                          | | |_   _/ __ \\ ")
+    puts (" _ __ ___   ___   ___   __| |   | || |  | |")
+    puts ("| '_ ` _ \\ / _ \\ / _ \\ / _` |   | || |  | |")
+    puts ("| | | | | | (_) | (_) | (_| |_ _| || |__| |") 
+    puts ("|_| |_| |_|\\___/ \\___/ \\__,_(_)_____\\____/ ")
+    puts
+    puts
+    sleep 1
+    puts ("Welcome to mood.IO")
+    puts 
+    sleep 1
+    puts ("Press 1 to Log In")
+    sleep 1 
+    puts ("Press 2 to Sign Up")
+    sleep 1
+    puts ("Press 3 to Exit")
+    puts
   end
 
   def main_menu
@@ -371,4 +394,3 @@ end
 
 
 main()
-
