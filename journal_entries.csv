@@ -1,1 +1,4 @@
 title,content,mood
+{"title"=>"My First Day At CoderAcademy!", "content"=>"My first day at CoderAcademy was amazing!;I met a lot of cool people and learnt some cool code!;Plus I saw a great presentation!", "mood"=>"Happy"}
+{"title"=>"The Adventure At Bethany's House", "content"=>"Tonight I am at Bethany's house;We're going to have lots and lots of fun;I can't wait!", "mood"=>"In love"}
+{"title"=>"Test", "content"=>"1;2;3;4;5;6", "mood"=>"Tired"}
