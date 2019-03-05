@@ -1,3 +1,10 @@
+
+require 'csv'
+require 'pry'
+require 'date'
+
+@journal_entries_arr = []
+
 def main_menu
     puts("Welcome to mood.IO")
     puts("Please select the main following options: ")
@@ -50,25 +57,32 @@ def get_journal_entry()
     lines << input
   end
 
+  puts
+
+  puts("Choose a mood for this entry!")
+  # run mood_list_display function
+  mood = "Happy"
+
+  lines.pop
+
   return {
     title: title,
-    content: lines 
+    content: lines,
+    mood: mood
   }
 
 end
 
-def save_journal_entry_to_disk(journal_entry)
+
+def add_journal_entry_to_arr(journal_entry)
   content = journal_entry[:content].join(';')
+  csv_text = "title,content,mood\n#{journal_entry[:title]},#{content},#{journal_entry[:mood]}"
+  csv_entry = CSV.parse(csv_text, :headers => true)
 
-  File.open("journal_entries.csv", "a+").puts("#{journal_entry[:title]},#{content}")
-  File.close
+  csv_entry.each { |row|
+    @journal_entries_arr << row.to_hash
+  }
 end
-
-journal_entry = get_journal_entry()
-
-save_journal_entry_to_disk(journal_entry)
-
-mood_list_arr = ["Happy", "Sad", "Chilled"]
 
 def custom_mood(mood_list_arr)
     puts("Press 1: To add a mood")
@@ -95,6 +109,50 @@ def custom_mood(mood_list_arr)
         puts "home page" 
     end
 end
-custom_mood(mood_list_arr)
-print mood_list_arr
-        
+
+def save_journal_entries_arr_to_disk()
+  File.open("journal_entries.csv", "w") do |file|
+    file.puts("title,content,mood")
+    @journal_entries_arr.each { |journal|
+      file.puts(journal)
+    }
+  end
+
+end
+
+def read_journal_entries_to_array()
+  @journal_entries_arr = []
+
+  File.open("journal_entries.csv").each_with_index { |row, index|
+    if index != 0
+      @journal_entries_arr << eval(row) 
+    end
+  }
+end
+
+def display_list_of_entries()
+  @journal_entries_arr.each_with_index { |journal, index|
+    puts("#{index + 1}. #{journal['title']}")
+  }
+end
+
+def show_content_of_entry(user_selection)
+  journal = @journal_entries_arr[user_selection - 1]
+
+  lines = journal['content'].split(';')
+
+  puts `clear`
+  puts journal['title']
+  puts
+
+  lines.each { |line|
+    puts line
+  }
+end
+
+
+def view_mood_list(mood_list_arr)
+    mood_list_arr.each_with_index do |moodli, index|
+        puts "#{index + 1}: #{moodli}"
+    end
+end
