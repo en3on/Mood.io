@@ -12,7 +12,7 @@ class Journal
 
   def main_menu
     input = ""
-    while input != "6" 
+    while input != "7" 
       puts `clear`
       puts("Welcome to mood.IO!")
       puts("Please select an option: ")
@@ -46,9 +46,9 @@ class Journal
         # If there are no journal entries, display an error
         if @journal_entries_arr.length > 0
           # Present user with a menu to view all titles of entries. User can then select an entry to view
-          input = display_list_of_entries
+          input = display_list_of_entries(@journal_entries_arr)
           # Display content of selected entry
-          show_content_of_entry(input) if input != nil
+          show_content_of_entry(input, @journal_entries_arr) if input != nil
         else
           puts("There are no entries!")
           sleep 1
@@ -63,8 +63,7 @@ class Journal
         puts("Press enter to return...")
         gets
       when "6"
-
-        p 5
+        filter_entries_by_mood()
       when "7"
         puts("Thanks for using mood.IO! :)")
         break
@@ -226,9 +225,9 @@ class Journal
     }
   end
 
-  def display_list_of_entries()
+  def display_list_of_entries(journal_entries_arr)
     puts `clear`
-    @journal_entries_arr.each_with_index { |journal, index|
+    journal_entries_arr.each_with_index { |journal, index|
       puts("#{index + 1}. #{journal['title']}")
     }
     puts
@@ -238,7 +237,7 @@ class Journal
       input = gets.strip
 
       if input.count('0-9') == input.length
-        if input.to_i <= @journal_entries_arr.length
+        if input.to_i <= journal_entries_arr.length
           return input.to_i
         end
       elsif input.upcase == "EXIT"
@@ -249,8 +248,8 @@ class Journal
     end
   end
 
-  def show_content_of_entry(user_selection)
-    journal = @journal_entries_arr[user_selection - 1]
+  def show_content_of_entry(user_selection, journal_entries_arr)
+    journal = journal_entries_arr[user_selection - 1]
 
     lines = journal['content'].split(';')
 
@@ -350,9 +349,45 @@ class Journal
   end
 
   def filter_entries_by_mood()
-    view_mood_list(@mood_list)
+    puts `clear`
+
+    mood_list = []
+
+    @journal_entries_arr.each { |journal|
+      mood_list << journal['mood'] if !mood_list.include?(journal['mood'])
+    }
+
+    view_mood_list(mood_list)
+    puts
+    print("Select the mood you'd like to filter (Type EXIT to return): ")
+    input = gets.strip
+
+    valid_input = false
+
+
+
+    while !valid_input
+      if input.count('0-9') == input.length
+        if input.to_i <= mood_list.length
+          selected_mood = mood_list[input.to_i - 1]
+          break
+        end
+      end
+      puts("Please enter a valid mood!")
+      print("Select the mood you'd like to filter (Type EXIT to return): ")
+      input = gets.strip
+    end
+
+    filtered_array = []
+
+    @journal_entries_arr.each { |journal|
+      filtered_array << journal if journal['mood'] == selected_mood
+    }
+
+    selected_entry = display_list_of_entries(filtered_array)
+    show_content_of_entry(selected_entry, filtered_array) if selected_entry != nil
   end
-    
+
 end
 
 
