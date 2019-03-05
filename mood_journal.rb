@@ -32,12 +32,18 @@ class Journal
 
       case input
       when "1"
+        # Open interface to allow user to input journal entry and save entry to a var 'journal'
         journal = get_journal_entry(@mood_list)
+        # Add the journal var to the journal_entries_array that was definied in 'initialize'
         add_journal_entry_to_arr(journal)
+        # Write the entire journal_entries_arr to disk
         save_journal_entries_arr_to_disk()
       when "2"
+        # If there are no journal entries, display an error
         if @journal_entries_arr.length > 0
+          # Present user with a menu to view all titles of entries. User can then select an entry to view
           input = display_list_of_entries
+          # Display content of selected entry
           show_content_of_entry(input) if input != nil
         else
           puts("There are no entries!")
@@ -45,6 +51,7 @@ class Journal
           gets
         end
       when "3"
+        # Display journal entry titles to user and allow them to delete a specific entry
         remove_journal_entry()
       when "4"
         custom_mood()
@@ -69,6 +76,7 @@ class Journal
     puts("NEW JOURNAL ENTRY")
     puts
     puts
+    # Get title for journal entry
     print("Title: ")
     title = gets.strip()
 
@@ -80,6 +88,8 @@ class Journal
 
     lines = []
 
+    # Let user enter a multiline journal entry and store each line to an array 'lines'
+    # If user enters the word EXIT on a new line, the while loop is exited
     while input != "EXIT"
       input = gets.strip
       lines << input
@@ -87,19 +97,35 @@ class Journal
 
     puts
 
+    # Dispaly list of moods for the user to choose from for the entry
     view_mood_list(mood_list)
     puts
-    puts("Choose a mood for this entry! (Enter the mood name)")
-    puts
 
+    # Remove the 'EXIT' line from the array
+    lines.pop
+
+    # For each line, remove any commas found
+    lines.each { |line|
+      line.tr!(',', '')
+    }
+    
     valid_input = false
-
     while !valid_input
-      mood = gets.strip().capitalize
-      mood_list.include?(mood) ? valid_input = true : puts("Please enter a valid mood!")
-    end
+      print("Choose a mood for this entry (Enter mood number): ")
+      input = gets.strip()
 
-    lines.pop.tr!(',', '')
+      if input.count('0-9') == input.length
+        if input.to_i <= mood_list.length && input.to_i > 0
+          mood = mood_list[input.to_i - 1]
+          break
+        end
+      end
+
+      puts("Please enter a valid number!")
+      puts
+      view_mood_list(mood_list)
+    end
+    
 
     return {
       title: title,
@@ -300,6 +326,11 @@ class Journal
     save_journal_entries_arr_to_disk
 
   end
+
+  def filter_entries_by_mood()
+    view_mood_list(@mood_list)
+  end
+    
 end
 
 
