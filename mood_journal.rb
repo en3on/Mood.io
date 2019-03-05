@@ -64,6 +64,12 @@ def save_journal_entry_to_disk(journal_entry)
   File.close
 end
 
-journal_entry = get_journal_entry()
+mood_list = ["Happy", "Sad", "Angry"]
 
-save_journal_entry_to_disk(journal_entry)
+def view_mood_list(mood_list_arr)
+    mood_list_arr.each_with_index do |moodli, index|
+        puts "#{index + 1}: #{moodli}"
+    end
+end
+
+view_mood_list(mood_list)
