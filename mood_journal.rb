@@ -31,12 +31,17 @@ class Journal
 
       case input
       when "1"
-        # Open interface to allow user to input journal entry and save entry to a var 'journal'
-        journal = get_journal_entry(@mood_list)
-        # Add the journal var to the journal_entries_array that was definied in 'initialize'
-        add_journal_entry_to_arr(journal)
-        # Write the entire journal_entries_arr to disk
-        save_journal_entries_arr_to_disk()
+        if @mood_list.length > 0
+          # Open interface to allow user to input journal entry and save entry to a var 'journal'
+          journal = get_journal_entry(@mood_list)
+          # Add the journal var to the journal_entries_array that was definied in 'initialize'
+          add_journal_entry_to_arr(journal)
+          # Write the entire journal_entries_arr to disk
+          save_journal_entries_arr_to_disk()
+        else
+          puts("There are no moods! Please add some custom moods...")
+          sleep 2
+        end
       when "2"
         # If there are no journal entries, display an error
         if @journal_entries_arr.length > 0
@@ -46,8 +51,7 @@ class Journal
           show_content_of_entry(input) if input != nil
         else
           puts("There are no entries!")
-          puts("Press enter to continue...")
-          gets
+          sleep 1
         end
       when "3"
         # Display journal entry titles to user and allow them to delete a specific entry
