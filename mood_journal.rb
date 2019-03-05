@@ -173,7 +173,10 @@ class Journal
       puts "Type your mood:"
       puts
       mood_input = gets().strip
-      @mood_list << mood_input.capitalize
+
+      !@mood_list.include?(mood_input.capitalize) ? @mood_list << mood_input.capitalize : (puts("That mood already exists!")
+                                                                                           sleep 2
+                                                                                          )
     when "2"
       puts `clear`
       view_mood_list(@mood_list)
@@ -297,6 +300,8 @@ class Journal
   def get_most_used_moods()
     mood_hash = {}
 
+    puts `clear`
+
     @journal_entries_arr.each { |journal|
       if mood_hash[journal['mood']] == nil
         mood_hash[journal['mood']] = 1
@@ -304,8 +309,6 @@ class Journal
         mood_hash[journal['mood']] += 1
       end
     }
-
-    puts(mood_hash)
 
     sorted_mood_hash = mood_hash.sort_by { |mood, count| count}.reverse
 
