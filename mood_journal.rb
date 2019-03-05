@@ -150,34 +150,49 @@ class Journal
     puts `clear`
     view_mood_list(@mood_list)
     puts
-    puts("Press 1: To add a mood")
-    puts("Press 2: To delete a mood")
-    puts("Press 3: Go back to Homepage")
-    user_input_custom_mood = gets().strip.to_i
-    while (user_input_custom_mood != 1 && user_input_custom_mood != 2 && user_input_custom_mood != 3)
-      puts `clear`
-      puts("Error incorrect input")
-      puts
-      view_mood_list(@mood_list)
-      puts("Press 1: To add a mood?")
-      puts("Press 2: To delete a mood")
-      puts("Press 3: Go back to Homepage")
-      user_input_custom_mood = gets().strip.to_i
+    valid_inputs = ["1", "2", "3"] 
+
+    puts("[1] Add Mood")
+    puts("[2] Delete Mood")
+    puts("[3] Return to Main Menu")
+
+    user_input = gets.strip
+
+    while !valid_inputs.include?(user_input)
+      puts("Please enter a valid number!")
+      user_input = gets.strip
     end
-    if (user_input_custom_mood == 1)
+
+    case user_input
+    when "1"
       puts `clear`
       puts "Type your mood:"
       puts
       mood_input = gets().strip
       @mood_list << mood_input.capitalize
-    elsif (user_input_custom_mood == 2)
+    when "2"
       puts `clear`
+      view_mood_list(@mood_list)
+      puts
       puts "Type a mood that you want to delete:"
       puts
-      puts
-      delete_mood_input = gets().strip.capitalize
-      @mood_list.delete(delete_mood_input)
-    elsif (user_input_custom_mood == 3)
+
+      valid_input = false
+
+      while !valid_input
+        delete_mood_input = gets().strip
+        if delete_mood_input.count('0-9') == delete_mood_input.length
+          if delete_mood_input.to_i <= @mood_list.length
+            @mood_list.delete_at(delete_mood_input.to_i - 1)
+            break
+          end
+        end
+
+        puts("Please enter a valid number!")
+
+      end
+
+    when "3" 
       return
     end
 
