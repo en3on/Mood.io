@@ -1,4 +1,4 @@
-#def main_menu
+def main_menu
     puts("Welcome to mood.IO")
     puts("Please select the main following options: ")
     puts("Press 1 - To add a journal entry")
@@ -31,4 +31,4 @@
     elsif (user_input == 6)
         puts "Thank you for using mood.IO"
     end
-    
+end
