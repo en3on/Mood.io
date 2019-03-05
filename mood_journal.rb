@@ -1,5 +1,6 @@
 require 'csv'
 require 'pry'
+require 'date'
 
 @journal_entries_arr = []
 
@@ -28,9 +29,11 @@ def get_journal_entry(mood_list_arr)
   # run mood_list_display function
   mood = "Happy"
 
+  lines.pop
+
   return {
     title: title,
-    content: lines, 
+    content: lines,
     mood: mood
   }
 
@@ -58,25 +61,6 @@ def save_journal_entries_arr_to_disk()
 
 end
 
-#def save_journal_entry_to_disk(journal_entry)
-  #content = journal_entry[:content].join(';')
-
-  #File.open("journal_entries.csv", "a+").puts("#{journal_entry[:title]},#{content},#{journal_entry[:mood]}")
-#end
-
-#def read_journal_entries_from_disk(file_name)
-  #csv_text = File.read("journal_entries.csv")
-  #csv = CSV.parse(csv_text, :headers => true)
-
-  #journal_entries = []
-
-  #csv.each { |row|
-    #row_data = row.to_hash 
-    
-    #journal_entries << row_data
-  #}
-#end
-
 def read_journal_entries_to_array()
   @journal_entries_arr = []
 
@@ -87,11 +71,24 @@ def read_journal_entries_to_array()
   }
 end
 
-def display_list_of_entries(journal_entries_arr)
+def display_list_of_entries()
   @journal_entries_arr.each_with_index { |journal, index|
     puts("#{index + 1}. #{journal['title']}")
   }
 end
 
+def show_content_of_entry(user_selection)
+  journal = @journal_entries_arr[user_selection - 1]
+
+  lines = journal['content'].split(';')
+
+  puts `clear`
+  puts journal['title']
+  puts
+
+  lines.each { |line|
+    puts line
+  }
+end
 binding.pry
 var = true
