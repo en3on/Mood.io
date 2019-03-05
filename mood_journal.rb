@@ -38,7 +38,7 @@ class Journal
       when "2"
         if @journal_entries_arr.length > 0
           input = display_list_of_entries
-          show_content_of_entry(input)
+          show_content_of_entry(input) if input != nil
         else
           puts("There are no entries!")
           puts("Press enter to continue...")
@@ -184,6 +184,7 @@ class Journal
       puts("#{index + 1}. #{journal['title']}")
     }
     puts
+    puts("Type EXIT to return to main menu")
     print("Please enter the number of the journal entry you would like to view: ")
     while true
       input = gets.strip
@@ -192,6 +193,8 @@ class Journal
         if input.to_i <= @journal_entries_arr.length
           return input.to_i
         end
+      elsif input.upcase == "EXIT"
+        return
       end
 
       puts("Please enter a valid number!")
