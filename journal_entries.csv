@@ -1,2 +1,4 @@
 title,content,mood
 {"title"=>"My First Day At CoderAcademy!", "content"=>"My first day at CoderAcademy was amazing!;I met a lot of cool people and learnt some cool code!;Plus I saw a great presentation!", "mood"=>"Happy"}
+{"title"=>"The Adventure At Bethany's House", "content"=>"Tonight I am at Bethany's house;We're going to have lots and lots of fun;I can't wait!", "mood"=>"In love"}
+{"title"=>"The Best Ice Lolly I've Ever Received", "content"=>"Tonight I had the BEST NIGHT EVER!;Do you want to know why?;My 2nd favourite girlfriend got me the BEST ice lolly ever!;The reason she isn't my first", "mood"=>" is because my first girlfriend is:;THE ICE LOLLY!", nil=>"Happy"}

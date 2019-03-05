@@ -19,12 +19,13 @@ class Journal
       puts("Please select an option: ")
       puts
 
-      puts("[1] Add journal entry")
+      puts("[1] Add Journal Entry")
       puts("[2] View Journal Entries")
-      puts("[3] Add or Delete Moods")
-      puts("[4] Show the most used moods")
-      puts("[5] Filter entries by mood")
-      puts("[6] Exit")
+      puts("[3] Delete Journal Entry")
+      puts("[4] Add or Delete Moods")
+      puts("[5] Show the most used moods")
+      puts("[6] Filter entries by mood")
+      puts("[7] Exit")
       puts
 
       input = gets.strip
@@ -44,18 +45,21 @@ class Journal
           gets
         end
       when "3"
-        custom_mood()
+        remove_journal_entry()
       when "4"
+        custom_mood()
+      when "5"
         get_most_used_moods() 
         puts("Press enter to return...")
         gets
-      when "5"
-        p 5
       when "6"
+        p 5
+      when "7"
         puts("Thanks for using mood.IO! :)")
         break
       else
         puts("Please enter a valid option!")
+        sleep 1
       end
     end
   end
@@ -87,9 +91,15 @@ class Journal
     puts
     puts("Choose a mood for this entry! (Enter the mood name)")
     puts
-    mood = gets.strip().capitalize
 
-    lines.pop
+    valid_input = false
+
+    while !valid_input
+      mood = gets.strip().capitalize
+      mood_list.include?(mood) ? valid_input = true : puts("Please enter a valid mood!")
+    end
+
+    lines.pop.tr!(',', '')
 
     return {
       title: title,
@@ -239,21 +249,53 @@ class Journal
   def get_most_used_moods()
     mood_hash = {}
 
-    @mood_list.each { |mood|
-      mood_hash[mood] = 0
+    @journal_entries_arr.each { |journal|
+      if mood_hash[journal['mood']] == nil
+        mood_hash[journal['mood']] = 1
+      else
+        mood_hash[journal['mood']] += 1
+      end
     }
 
     puts(mood_hash)
-
-    @journal_entries_arr.each { |journal|
-      mood_hash[journal['mood']] += 1
-    }
 
     sorted_mood_hash = mood_hash.sort_by { |mood, count| count}.reverse
 
     sorted_mood_hash.each { |mood, count|
       puts("#{mood}: #{count}")
     }
+  end
+
+  def remove_journal_entry()
+    puts `clear`
+
+    @journal_entries_arr.each_with_index { |journal, index|
+      puts("#{index + 1}. #{journal['title']}")
+    }
+
+    puts()
+
+    valid_input = false
+    while true
+      puts("Type EXIT to return to main menu")
+      print("Enter number of entry to remove: ")
+      entry_to_delete = gets.strip
+      if entry_to_delete.count('0-9') == entry_to_delete.length
+        if entry_to_delete.to_i <= @journal_entries_arr.length
+          break
+        end
+      elsif entry_to_delete.upcase == "EXIT"
+        return
+      end
+
+      puts("Please enter a valid number!")
+
+    end
+
+    @journal_entries_arr.delete_at(entry_to_delete.to_i - 1)
+
+    save_journal_entries_arr_to_disk
+
   end
 end
 
