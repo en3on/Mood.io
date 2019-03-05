@@ -84,7 +84,31 @@ def add_journal_entry_to_arr(journal_entry)
   }
 end
 
-
+def custom_mood(mood_list_arr)
+    puts("Press 1: To add a mood")
+    puts("Press 2: To delete a mood")
+    puts("Press 3: Go back to Homepage")
+    user_input_custom_mood = gets().strip.to_i
+    while (user_input_custom_mood != 1 && user_input_custom_mood != 2 && user_input_custom_mood != 3)
+        puts("Error Error incorrect input")
+        puts("Press 1: To add a mood?")
+        puts("Press 2: To delete a mood")
+        puts("Press 3: Go back to Homepage")
+        user_input_custom_mood = gets().strip.to_i
+    end
+    if (user_input_custom_mood == 1)
+        puts "Type your mood:"
+        mood_input = gets().strip.capitalize
+        mood_list_arr << mood_input
+    elsif (user_input_custom_mood == 2)
+        puts "Type a mood that you want to delete:"
+        puts mood_list_arr
+        delete_mood_input = gets().strip.capitalize
+        mood_list_arr.delete(delete_mood_input)
+    elsif (user_input_custom_mood == 3)
+        puts "home page" 
+    end
+end
 
 def save_journal_entries_arr_to_disk()
   File.open("journal_entries.csv", "w") do |file|
@@ -132,4 +156,3 @@ def view_mood_list(mood_list_arr)
         puts "#{index + 1}: #{moodli}"
     end
 end
-
