@@ -1,4 +1,6 @@
-def get_journal_entry()
+require 'csv'
+
+def get_journal_entry(mood_list_arr)
   print("Title: ")
   title = gets.strip()
 
@@ -15,9 +17,16 @@ def get_journal_entry()
     lines << input
   end
 
+  puts
+
+  puts("Choose a mood for this entry!")
+  # run mood_list_display function
+  mood = "Happy"
+
   return {
     title: title,
-    content: lines 
+    content: lines, 
+    mood: mood
   }
 
 end
@@ -25,11 +34,22 @@ end
 def save_journal_entry_to_disk(journal_entry)
   content = journal_entry[:content].join(';')
 
-  File.open("journal_entries.csv", "a+").puts("#{journal_entry[:title]},#{content}")
+  File.open("journal_entries.csv", "a+").puts("#{journal_entry[:title]},#{content},#{journal_entry[:mood]}")
   File.close
 end
 
-journal_entry = get_journal_entry()
+def read_journal_entries_from_disk(file_name)
+  csv_text = File.read("journal_entries.csv")
+  csv = CSV.parse(csv_text, :headers => true)
 
+  journal_entries = []
+
+  csv.each { |row|
+    row_data = row.to_hash 
+    
+    journal_entries << row_data
+  }
+end
+
+journal_entry = get_journal_entry("nothing")
 save_journal_entry_to_disk(journal_entry)
-
