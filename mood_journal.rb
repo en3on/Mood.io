@@ -35,7 +35,6 @@ def save_journal_entry_to_disk(journal_entry)
   content = journal_entry[:content].join(';')
 
   File.open("journal_entries.csv", "a+").puts("#{journal_entry[:title]},#{content},#{journal_entry[:mood]}")
-  File.close
 end
 
 def read_journal_entries_from_disk(file_name)
@@ -51,5 +50,9 @@ def read_journal_entries_from_disk(file_name)
   }
 end
 
-journal_entry = get_journal_entry("nothing")
-save_journal_entry_to_disk(journal_entry)
+def display_list_of_entries(journal_entries_arr)
+  journal_entries_arr.each_with_index { |journal, index|
+    puts("#{index + 1}. #{journal['title']}")
+  }
+end
+
