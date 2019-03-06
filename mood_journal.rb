@@ -5,28 +5,59 @@ require 'date'
 
 @journal_entries_arr = []
 
-def title
+# def title
+#   puts
+#   puts ("                           _   _____ ____  ")
+#   puts ("                          | | |_   _/ __ \\ ")
+#   puts (" _ __ ___   ___   ___   __| |   | || |  | |")
+#   puts ("| '_ ` _ \\ / _ \\ / _ \\ / _` |   | || |  | |")
+#   puts ("| | | | | | (_) | (_) | (_| |_ _| || |__| |") 
+#   puts ("|_| |_| |_|\\___/ \\___/ \\__,_(_)_____\\____/ ")
+#   puts
+#   puts
+#   sleep 1
+#   puts ("Welcome to mood.IO")
+#   puts 
+#   sleep 1
+#   puts ("Press 1 to Log In")
+#   sleep 1 
+#   puts ("Press 2 to Sign Up")
+#   sleep 1
+#   puts ("Press 3 to Exit")
+#   puts
+# end
+# title
+
+def log_in_screen()
+  lineWidth = 100
   puts
-  puts ("                           _   _____ ____  ")
-  puts ("                          | | |_   _/ __ \\ ")
-  puts (" _ __ ___   ___   ___   __| |   | || |  | |")
-  puts ("| '_ ` _ \\ / _ \\ / _ \\ / _` |   | || |  | |")
-  puts ("| | | | | | (_) | (_) | (_| |_ _| || |__| |") 
-  puts ("|_| |_| |_|\\___/ \\___/ \\__,_(_)_____\\____/ ")
+  puts ("mood.IO".center(lineWidth))
   puts
+  print ("Username: ")
+  username_input = gets().strip
   puts
-  sleep 1
-  puts ("Welcome to mood.IO")
-  puts 
-  sleep 1
-  puts ("Press 1 to Log In")
-  sleep 1 
-  puts ("Press 2 to Sign Up")
-  sleep 1
-  puts ("Press 3 to Exit")
+  print ("Password: ")
+  password_input = gets().strip
   puts
 end
-title
+
+def register_screen()
+  lineWidth = 100
+  puts
+  puts ("mood.IO".center(lineWidth))
+  puts
+  puts ("Register Account")
+  puts
+  print ("New Username: ")
+  username_input = gets().strip
+  puts
+  print ("New Password: ")
+  password_input = gets().strip
+  puts
+  print ("New Password again: ")
+  password_again_input = gets().strip
+  puts
+end
 
 # def main_menu
 # lineWidth = 100
