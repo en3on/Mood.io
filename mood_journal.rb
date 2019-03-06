@@ -39,16 +39,21 @@ class Journal
     display_title_options
     puts
     sleep 1
-    print("Selection: ")
-    input = gets.strip
 
-    case input
-    when "1"
-      log_in_screen
-    when "2"
-      register_screen
-    when "3"
-      shutdown()
+    while true 
+      print("Selection: ")
+      input = gets.strip
+
+      case input
+      when "1"
+        log_in_screen
+      when "2"
+        register_screen
+      when "3"
+        shutdown()
+      else
+        puts("Please enter a valid option!".colorize(:red))
+      end
     end
   end
   
