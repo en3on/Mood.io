@@ -2,66 +2,124 @@
 require 'csv'
 require 'pry'
 require 'date'
+require 'digest'
 
+require './database/account_class'
 
 class Journal
-  attr_accessor(:journal_entries_arr, :mood_list)
+  attr_accessor(:journal_entries_arr, :mood_list, :current_account)
   def initialize
     @journal_entries_arr = []
     @mood_list = []
+    @current_account = nil
   end
   
   def title
+    puts `clear`
     puts
     puts ("                           _   _____ ____  ")
+    sleep 0.2
     puts ("                          | | |_   _/ __ \\ ")
+    sleep 0.2
     puts (" _ __ ___   ___   ___   __| |   | || |  | |")
+    sleep 0.2
     puts ("| '_ ` _ \\ / _ \\ / _ \\ / _` |   | || |  | |")
+    sleep 0.2
     puts ("| | | | | | (_) | (_) | (_| |_ _| || |__| |") 
+    sleep 0.2
     puts ("|_| |_| |_|\\___/ \\___/ \\__,_(_)_____\\____/ ")
+    sleep 0.2
     puts
     puts
-    sleep 1
+    sleep 0.5
     puts ("Welcome to mood.IO")
     puts 
-    sleep 1
-    puts ("Press 1 to Log In")
-    sleep 1 
+    sleep 1.5
+    puts("Press 1 to Log In")
+    sleep 0.5 
     puts ("Press 2 to Sign Up")
-    sleep 1
+    sleep 0.5
     puts ("Press 3 to Exit")
     puts
+    sleep 1
+    print("Selection: ")
+    input = gets.strip
+
+    case input
+    when "1"
+      log_in_screen
+    when "2"
+      register_screen
+    when "3"
+      exit
+    end
   end
   
   def log_in_screen()
-    lineWidth = 100
-    puts
-    puts ("mood.IO".center(lineWidth))
-    puts
-    print ("Username: ")
-    username_input = gets().strip
-    puts
-    print ("Password: ")
-    password_input = gets().strip
-    puts
+    puts `clear`
+    while true
+      lineWidth = 100
+      puts
+      puts ("mood.IO".center(lineWidth))
+      puts
+      print ("Username: ")
+      username = gets().strip
+      puts
+      print ("Password: ")
+      password = gets().strip
+      puts
+
+      if File.exists?("database/journals/#{username}.csv")
+        correct_password = File.read("database/passwords/#{username}.txt")
+        if Digest::SHA2.hexdigest(password) == correct_password
+          @current_account = username
+          puts("Welcome, #{username}!")
+          read_journal_entries_to_array
+          read_mood_list_from_file
+          main_menu
+        end
+      end
+      puts("Incorrect username or password!")
+    end
   end
 
 def register_screen()
-  lineWidth = 100
+  lineWidth = 150
+  puts `clear`
   puts
   puts ("mood.IO".center(lineWidth))
   puts
-  puts ("Register Account")
-  puts
-  print ("New Username: ")
-  username_input = gets().strip
-  puts
-  print ("New Password: ")
-  password_input = gets().strip
-  puts
-  print ("New Password again: ")
-  password_again_input = gets().strip
-  puts
+  while true
+    print("Enter username: ")
+    username = gets.strip
+    puts
+    print("Enter password: ")
+    password = gets.strip
+    puts
+    print("Enter password again: ")
+    password_again = gets.strip
+    puts
+
+    if password == password_again
+      if File.exists?("database/journals/#{username}.csv")
+        puts("Username is taken!")
+      else
+
+        File.new("database/journals/#{username}.csv"   , "w")
+        File.new("database/passwords/#{username}.txt"  , "w")
+        File.new("database/moods/#{username}.txt"      , "w")
+        File.open("database/passwords/#{username}.txt" , "w") do |file|
+          file.print(Digest::SHA2.hexdigest(password))
+        end
+
+        puts("Account Created!")
+        sleep 2
+        title
+      end
+    else
+      puts("Passwords don't match!")
+    end
+  end
 end
 
   def main_menu
@@ -120,7 +178,7 @@ end
         filter_entries_by_mood()
       when "7"
         puts("Thanks for using mood.IO! :)")
-        break
+        exit
       else
         puts("Please enter a valid option!")
         sleep 1
@@ -267,7 +325,7 @@ end
   end
 
   def save_journal_entries_arr_to_disk()
-    File.open("journal_entries.csv", "w") do |file|
+    File.open("database/journals/#{@current_account}.csv", "w") do |file|
       file.puts("title,content,mood,date")
       @journal_entries_arr.each { |journal|
         file.puts(journal)
@@ -279,7 +337,7 @@ end
   def read_journal_entries_to_array()
     @journal_entries_arr = []
 
-    File.open("journal_entries.csv").each_with_index { |row, index|
+    File.open("database/journals/#{@current_account}.csv").each_with_index { |row, index|
       if index != 0
         @journal_entries_arr << eval(row) 
       end
@@ -338,7 +396,7 @@ end
   end
 
   def write_mood_list_to_file()
-    File.open("mood_list.txt", "w") do |file|
+    File.open("database/moods/#{@current_account}.txt", "w") do |file|
       @mood_list.each { |mood|
         file.puts(mood.strip)
       }
@@ -348,7 +406,7 @@ end
   def read_mood_list_from_file()
     @mood_list = []
     
-    file = File.open("mood_list.txt", "r")
+    file = File.open("database/moods/#{@current_account}.txt", "r")
     file.each_line { |line|
       @mood_list << line.strip
     }
@@ -459,6 +517,8 @@ end
 def main()
 
   journal_app = Journal.new
+
+  journal_app.title()
 
   journal_app.read_mood_list_from_file()
 
