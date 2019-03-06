@@ -1,4 +1,0 @@
-title,content,mood,date
-{"title"=>"Test Entry", "content"=>"line1;line2;line33", "mood"=>"Happy", "date"=>"6/3 @ 17:17"}
-{"title"=>"Test Entry 2", "content"=>"line1;line2;line3!@\#$%^&", "mood"=>"Sad", "date"=>nil}
-{"title"=>nil, "content"=>"6/3 @ 17:18", "mood"=>nil, "date"=>nil}

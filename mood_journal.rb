@@ -157,6 +157,7 @@ class Journal
           remove_journal_entry()
         else
           puts no_entries_error
+          sleep 1
         end
       when "4"
         # Allow user to create / delete moods
@@ -169,6 +170,7 @@ class Journal
           gets
         else
           puts no_entries_error
+          sleep 1
         end
       when "6"
         # Display journal entries with a certain mood
@@ -176,6 +178,7 @@ class Journal
           filter_entries_by_mood()
         else
           puts no_entries_error
+          sleep 1
         end
       when "7"
         # Close the app
