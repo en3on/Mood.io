@@ -1,8 +1,8 @@
-
 require 'csv'
 require 'pry'
 require 'date'
 require 'digest'
+require 'colorize'
 
 require './database/account_class'
 
@@ -17,29 +17,26 @@ class Journal
   def title
     puts `clear`
     puts
-    puts ("                           _   _____ ____  ")
+    puts ("                           _   _____ ____  ".colorize(:light_cyan))
     sleep 0.2
-    puts ("                          | | |_   _/ __ \\ ")
+    puts ("                          | | |_   _/ __ \\ ".colorize(:light_cyan))
     sleep 0.2
-    puts (" _ __ ___   ___   ___   __| |   | || |  | |")
+    puts (" _ __ ___   ___   ___   __| |   | || |  | |".colorize(:light_cyan))
     sleep 0.2
-    puts ("| '_ ` _ \\ / _ \\ / _ \\ / _` |   | || |  | |")
+    puts ("| '_ ` _ \\ / _ \\ / _ \\ / _` |   | || |  | |".colorize(:light_cyan))
     sleep 0.2
-    puts ("| | | | | | (_) | (_) | (_| |_ _| || |__| |") 
+    puts ("| | | | | | (_) | (_) | (_| |_ _| || |__| |".colorize(:light_cyan)) 
     sleep 0.2
-    puts ("|_| |_| |_|\\___/ \\___/ \\__,_(_)_____\\____/ ")
+    puts ("|_| |_| |_|\\___/ \\___/ \\__,_(_)_____\\____/ ".colorize(:light_cyan))
     sleep 0.2
     puts
     puts
     sleep 0.5
-    puts ("Welcome to mood.IO")
+    welcome_function()
+    puts
     puts 
     sleep 1.5
-    puts("Press 1 to Log In")
-    sleep 0.5 
-    puts ("Press 2 to Sign Up")
-    sleep 0.5
-    puts ("Press 3 to Exit")
+    display_title_options
     puts
     sleep 1
     print("Selection: ")
@@ -51,21 +48,21 @@ class Journal
     when "2"
       register_screen
     when "3"
-      exit
+      shutdown()
     end
   end
   
   def log_in_screen()
-    puts `clear`
     while true
+      puts `clear`
       lineWidth = 100
       puts
       puts ("mood.IO".center(lineWidth))
       puts
-      print ("Username: ")
+      print ("Username: ".colorize(:light_cyan))
       username = gets().strip
       puts
-      print ("Password: ")
+      print ("Password: ".colorize(:light_cyan))
       password = gets().strip
       puts
 
@@ -73,13 +70,14 @@ class Journal
         correct_password = File.read("database/passwords/#{username}.txt")
         if Digest::SHA2.hexdigest(password) == correct_password
           @current_account = username
-          puts("Welcome, #{username}!")
+          puts("Welcome,".colorize(:red) + " #{username}!".colorize(:light_cyan))
           read_journal_entries_to_array
           read_mood_list_from_file
           main_menu
         end
       end
-      puts("Incorrect username or password!")
+      puts("Incorrect username or password!".colorize(:red))
+      sleep 2
     end
   end
 
@@ -87,7 +85,7 @@ def register_screen()
   lineWidth = 150
   puts `clear`
   puts
-  puts ("mood.IO".center(lineWidth))
+  puts ("mood.IO".colorize(:light_cyan).center(lineWidth))
   puts
   while true
     print("Enter username: ")
@@ -102,7 +100,7 @@ def register_screen()
 
     if password == password_again
       if File.exists?("database/journals/#{username}.csv")
-        puts("Username is taken!")
+        puts("Username is taken!".colorize(:red))
       else
 
         File.new("database/journals/#{username}.csv"   , "w")
@@ -126,17 +124,17 @@ end
     input = ""
     while input != "7" 
       puts `clear`
-      puts("Welcome to mood.IO!")
+      puts("Welcome".colorize(:red) + " to " + "mood.IO".colorize(:light_cyan))
       puts("Please select an option: ")
       puts
 
-      puts("[1] Add Journal Entry")
-      puts("[2] View Journal Entries")
-      puts("[3] Delete Journal Entry")
-      puts("[4] Add or Delete Moods")
-      puts("[5] Show the most used moods")
-      puts("[6] Filter entries by mood")
-      puts("[7] Exit")
+      puts("[1]".colorize(:light_cyan) + " Add Journal Entry")
+      puts("[2]".colorize(:light_cyan) + " View Journal Entries")
+      puts("[3]".colorize(:light_cyan) + " Delete Journal Entry")
+      puts("[4]".colorize(:light_cyan) + " Add or Delete Moods")
+      puts("[5]".colorize(:light_cyan) + " Show the most used moods")
+      puts("[6]".colorize(:light_cyan) + " Filter entries by mood")
+      puts("[7]".colorize(:light_cyan) + " Exit")
       puts
 
       input = gets.strip
@@ -151,7 +149,7 @@ end
           # Write the entire journal_entries_arr to disk
           save_journal_entries_arr_to_disk()
         else
-          puts("There are no moods! Please add some custom moods...")
+          puts("There are no moods! Please add some custom moods...".colorize(:red))
           sleep 2
         end
       when "2"
@@ -162,7 +160,7 @@ end
           # Display content of selected entry
           show_content_of_entry(input, @journal_entries_arr) if input != nil
         else
-          puts("There are no entries!")
+          puts("There are no entries!".colorize(:red))
           sleep 1
         end
       when "3"
@@ -177,8 +175,7 @@ end
       when "6"
         filter_entries_by_mood()
       when "7"
-        puts("Thanks for using mood.IO! :)")
-        exit
+        shudown()
       else
         puts("Please enter a valid option!")
         sleep 1
@@ -510,6 +507,132 @@ end
     show_content_of_entry(selected_entry, filtered_array) if selected_entry != nil
   end
 
+  def shutdown
+    puts `clear`
+    puts("Thanks for using".colorize(:red))
+    puts ("                           _   _____ ____  ".colorize(:light_cyan))
+    sleep 0.2
+    puts ("                          | | |_   _/ __ \\ ".colorize(:light_cyan))
+    sleep 0.2
+    puts (" _ __ ___   ___   ___   __| |   | || |  | |".colorize(:light_cyan))
+    sleep 0.2
+    puts ("| '_ ` _ \\ / _ \\ / _ \\ / _` |   | || |  | |".colorize(:light_cyan))
+    sleep 0.2
+    puts ("| | | | | | (_) | (_) | (_| |_ _| || |__| |".colorize(:light_cyan)) 
+    sleep 0.2
+    puts ("|_| |_| |_|\\___/ \\___/ \\__,_(_)_____\\____/ ".colorize(:light_cyan))
+    puts
+    puts
+    sleep 0.2
+    puts(" _")
+    sleep 0.2
+    puts("|_)")
+    sleep 0.2
+    puts("|_)\\/")
+    sleep 0.2
+    puts("   /")
+    sleep 0.2
+    puts()
+    sleep 0.2
+    puts()
+    sleep 0.2
+    puts(" /\\ _| _.._ _  |  _. _| _ ||".colorize(:light_magenta))
+    sleep 0.2
+    puts("/--\(_|(_|| | | |_(_|(_|(/_||".colorize(:light_magenta))
+    sleep 0.2
+    puts
+    sleep 0.2
+    puts(" _            _".colorize(:blue))
+    sleep 0.2
+    puts("| \\ _.  o _| |_)   o".colorize(:blue))
+    sleep 0.2
+    puts("|_/(_|\\/|(_| |_)|_||".colorize(:blue))
+    sleep 0.5
+    puts
+    exit
+  end
+
+  def welcome_function()
+    message = "Welcome to mood.IO by Adam Ladell and David Bui"
+
+    words = message.split(' ')
+
+    words.each { |word|
+      letters = word.split('')
+      
+      letters.each { |letter|
+        print(letter.colorize(
+          case word
+          when "Welcome"
+            :red
+          when "mood.IO"
+            :light_cyan
+          when "Adam"
+            :light_magenta
+          when "Ladell"
+            :light_magenta
+          when "David"
+            :blue
+          when "Bui"
+            :blue
+          else
+            :default
+          end
+        ))
+        sleep 0.01
+      }
+      print ' '
+    }
+
+  end
+
+end
+
+def display_title_options()
+  options = ["Press 1 to Log In", "Press 2 to Sign Up", "Press 3 to Exit"]
+
+  words = []
+
+  options.each_with_index { |option|
+    words << option.split(' ')
+  }
+
+    words.each { |word_arr|
+      word_arr.each { |word|
+        letters = word.split('')
+        letters.each { |letter|
+          print(letter.colorize(
+            case word
+            when "Press"
+              :red
+            when "1"
+              :light_green
+            when "2"
+              :light_green
+            when "3"
+              :light_green
+            when "Log"
+              :light_cyan
+            when "In"
+              :light_cyan
+            when "Sign"
+              :light_cyan
+            when "Up"
+              :light_cyan
+            when "Exit"
+              :light_cyan
+            else
+              :default
+            end
+          ))
+          sleep 0.01
+        }
+        sleep 0.02
+        print(' ')
+      }
+      puts
+    }
+        
 end
 
 
