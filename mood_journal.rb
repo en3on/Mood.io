@@ -32,6 +32,37 @@ class Journal
     puts ("Press 3 to Exit")
     puts
   end
+  
+  def log_in_screen()
+    lineWidth = 100
+    puts
+    puts ("mood.IO".center(lineWidth))
+    puts
+    print ("Username: ")
+    username_input = gets().strip
+    puts
+    print ("Password: ")
+    password_input = gets().strip
+    puts
+  end
+
+def register_screen()
+  lineWidth = 100
+  puts
+  puts ("mood.IO".center(lineWidth))
+  puts
+  puts ("Register Account")
+  puts
+  print ("New Username: ")
+  username_input = gets().strip
+  puts
+  print ("New Password: ")
+  password_input = gets().strip
+  puts
+  print ("New Password again: ")
+  password_again_input = gets().strip
+  puts
+end
 
   def main_menu
     input = ""
@@ -429,3 +460,4 @@ end
 
 
 main()
+
