@@ -5,40 +5,19 @@ require 'digest'
 require 'colorize'
 
 require './database/account_class'
+require './lib/animations'
 
 class Journal
+
   attr_accessor(:journal_entries_arr, :mood_list, :current_account)
   def initialize
     @journal_entries_arr = []
     @mood_list = []
     @current_account = nil
   end
-  
+
   def title
-    puts `clear`
-    puts
-    puts ("                           _   _____ ____  ".colorize(:light_cyan))
-    sleep 0.2
-    puts ("                          | | |_   _/ __ \\ ".colorize(:light_cyan))
-    sleep 0.2
-    puts (" _ __ ___   ___   ___   __| |   | || |  | |".colorize(:light_cyan))
-    sleep 0.2
-    puts ("| '_ ` _ \\ / _ \\ / _ \\ / _` |   | || |  | |".colorize(:light_cyan))
-    sleep 0.2
-    puts ("| | | | | | (_) | (_) | (_| |_ _| || |__| |".colorize(:light_cyan)) 
-    sleep 0.2
-    puts ("|_| |_| |_|\\___/ \\___/ \\__,_(_)_____\\____/ ".colorize(:light_cyan))
-    sleep 0.2
-    puts
-    puts
-    sleep 0.5
-    welcome_function()
-    puts
-    puts 
-    sleep 1.5
-    display_title_options
-    puts
-    sleep 1
+    Animation::welcome_screen()
 
     while true 
       print("Selection: ")
@@ -50,19 +29,19 @@ class Journal
       when "2"
         register_screen
       when "3"
-        shutdown()
+        Animation::shutdown()
       else
         puts("Please enter a valid option!".colorize(:red))
       end
     end
   end
+
   
   def log_in_screen()
     while true
       puts `clear`
-      lineWidth = 100
       puts
-      puts ("mood.IO".center(lineWidth))
+      puts ("mood.IO".center(150))
       puts
       print ("Username: ".colorize(:light_cyan))
       username = gets().strip
@@ -87,48 +66,46 @@ class Journal
     end
   end
 
-def register_screen()
-  lineWidth = 150
-  puts `clear`
-  puts
-  puts ("mood.IO".colorize(:light_cyan).center(lineWidth))
-  puts
-  while true
-    print("Enter username: ")
-    username = gets.strip
+  def register_screen()
+    puts `clear`
+    puts ("mood.IO".colorize(:light_cyan).center(150))
     puts
-    print("Enter password: ")
-    password = gets.strip
-    puts
-    print("Enter password again: ")
-    password_again = gets.strip
-    puts
+    while true
+      print("Enter username: ")
+      username = gets.strip
+      puts
+      print("Enter password: ")
+      password = gets.strip
+      puts
+      print("Enter password again: ")
+      password_again = gets.strip
+      puts
 
-    # Check if the passwords match
-    if password == password_again
-      # Check if a user with chosen username exists
-      if File.exists?("database/journals/#{username}.csv")
-        puts("Username is taken!".colorize(:red))
-      else
+      # Check if the passwords match
+      if password == password_again
+        # Check if a user with chosen username exists
+        if File.exists?("database/journals/#{username}.csv")
+          puts("Username is taken!".colorize(:red))
+        else
 
-        # Create user files
+          # Create user files
 
-        File.new("database/journals/#{username}.csv"   , "w")
-        File.new("database/passwords/#{username}.txt"  , "w")
-        File.new("database/moods/#{username}.txt"      , "w")
-        File.open("database/passwords/#{username}.txt" , "w") do |file|
-          file.print(Digest::SHA2.hexdigest(password))
+          File.new("database/journals/#{username}.csv"   , "w")
+          File.new("database/passwords/#{username}.txt"  , "w")
+          File.new("database/moods/#{username}.txt"      , "w")
+          File.open("database/passwords/#{username}.txt" , "w") do |file|
+            file.print(Digest::SHA2.hexdigest(password))
+          end
+
+          puts("Account Created!".colorize(:light_cyan))
+          sleep 2
+          title()
         end
-
-        puts("Account Created!".colorize(:light_cyan))
-        sleep 2
-        title
+      else
+        puts("Passwords don't match!".colorize(:red))
       end
-    else
-      puts("Passwords don't match!".colorize(:red))
     end
   end
-end
 
   def main_menu
     input = ""
@@ -138,16 +115,17 @@ end
       puts("Please select an option: ")
       puts
 
-      puts("[1]".colorize(:light_cyan) + " Add Journal Entry")
-      puts("[2]".colorize(:light_cyan) + " View Journal Entries")
-      puts("[3]".colorize(:light_cyan) + " Delete Journal Entry")
-      puts("[4]".colorize(:light_cyan) + " Add or Delete Moods")
-      puts("[5]".colorize(:light_cyan) + " Show the most used moods")
-      puts("[6]".colorize(:light_cyan) + " Filter entries by mood")
-      puts("[7]".colorize(:light_cyan) + " Exit")
+      options = ["Add Journal Entry", "View Journal Entries", "Delete Journal Entry", "Add or Delete Moods", "Show the Most Used Moods", "Filter Entries by Mood", "Exit"]
+
+      # display options menu
+      options.each_with_index { |option, index|
+        puts("[#{index + 1}]".colorize(:light_cyan) + " #{option}")
+      }
       puts
 
       input = gets.strip
+
+      no_entries_error = "You don't have any journal entries!".colorize(:red)
 
       case input
       when "1"
@@ -170,26 +148,38 @@ end
           # Display content of selected entry
           show_content_of_entry(input, @journal_entries_arr) if input != nil
         else
-          puts("There are no entries!".colorize(:red))
+          puts no_entries_error
           sleep 1
         end
       when "3"
         # Display journal entry titles to user and allow them to delete a specific entry
-        remove_journal_entry()
+        if @journal_entries_arr.length > 0
+          remove_journal_entry()
+        else
+          puts no_entries_error
+        end
       when "4"
         # Allow user to create / delete moods
         custom_mood()
       when "5"
         # Allow user to see the most used moods
-        get_most_used_moods() 
-        puts("Press enter to return...".colorize(:light_cyan))
-        gets
+        if @journal_entries_arr.length > 0
+          get_most_used_moods() 
+          puts("Press enter to return...".colorize(:light_cyan))
+          gets
+        else
+          puts no_entries_error
+        end
       when "6"
         # Display journal entries with a certain mood
-        filter_entries_by_mood()
+        if @journal_entries_arr.length > 0 
+          filter_entries_by_mood()
+        else
+          puts no_entries_error
+        end
       when "7"
         # Close the app
-        shutdown()
+        Animation::shutdown()
       else
         puts("Please enter a valid option!".colorize(:red))
         sleep 1
@@ -200,8 +190,7 @@ end
   def get_journal_entry(mood_list)
     puts `clear`
     puts("NEW JOURNAL ENTRY".colorize(:light_cyan))
-    puts
-    puts
+    2.times { puts }
     # Get title for journal entry
     print("Title: ".colorize(:light_magenta))
     title = gets.strip()
@@ -284,62 +273,67 @@ end
   end
 
   def custom_mood()
-    puts `clear`
-    view_mood_list(@mood_list)
-    puts
-    valid_inputs = ["1", "2", "3"] 
-
-    puts("[1]".colorize(:light_cyan) + " Add Mood")
-    puts("[2]".colorize(:light_cyan) + " Delete Mood")
-    puts("[3]".colorize(:light_cyan) + " Exit")
-    puts
-
-    user_input = gets.strip
-
-
-    # If the user's input is within the valid input list, then run a case statement to execute an option
-    while !valid_inputs.include?(user_input)
-      puts("Please enter a valid number!".colorize(:red))
-      user_input = gets.strip
-    end
-
-    case user_input
-    when "1"
-      puts `clear`
-      puts "Type your mood:".colorize(:light_cyan)
-      puts
-      mood_input = gets().strip
-
-      !@mood_list.include?(mood_input.capitalize) ? @mood_list << mood_input.capitalize : (puts("That mood already exists!".colorize(:red))
-                                                                                           sleep 2
-                                                                                          )
-    when "2"
+    while true
       puts `clear`
       view_mood_list(@mood_list)
       puts
-      puts "Type a mood that you want to delete:".colorize(:light_cyan)
+      valid_inputs = []
+
+      options = ["Add Mood", "Delete Mood", "Return"]
+
+      options.each_with_index { |option, index|
+        puts("[#{index + 1}]".colorize(:light_cyan) + " #{option}")
+        valid_inputs << (index + 1).to_s
+      }
       puts
 
-      valid_input = false
+      user_input = gets.strip
 
-      while !valid_input
-        delete_mood_input = gets().strip
-        if delete_mood_input.count('0-9') == delete_mood_input.length && delete_mood_input != "0"
-          if delete_mood_input.to_i <= @mood_list.length
-            @mood_list.delete_at(delete_mood_input.to_i - 1)
-            break
-          end
-        end
 
+      # If the user's input is within the valid input list, then run a case statement to execute an option
+      while !valid_inputs.include?(user_input)
         puts("Please enter a valid number!".colorize(:red))
-
+        user_input = gets.strip
       end
 
-    when "3" 
-      return
-    end
+      case user_input
+      when "1"
+        puts `clear`
+        puts "Type your mood:".colorize(:light_cyan)
+        puts
+        mood_input = gets().strip
 
-    write_mood_list_to_file
+        !@mood_list.include?(mood_input.capitalize) ? @mood_list << mood_input.capitalize : (puts("That mood already exists!".colorize(:red))
+                                                                                             sleep 2
+                                                                                            )
+      when "2"
+        puts `clear`
+        view_mood_list(@mood_list)
+        puts
+        puts "Type a mood that you want to delete:".colorize(:light_cyan)
+        puts
+
+        valid_input = false
+
+        while !valid_input
+          delete_mood_input = gets().strip
+          if delete_mood_input.count('0-9') == delete_mood_input.length && delete_mood_input != "0"
+            if delete_mood_input.to_i <= @mood_list.length
+              @mood_list.delete_at(delete_mood_input.to_i - 1)
+              break
+            end
+          end
+
+          puts("Please enter a valid number!".colorize(:red))
+
+        end
+
+      when "3" 
+        return
+      end
+
+      write_mood_list_to_file
+    end
   end
 
   # Save the local journal storage to the file associated with the account
@@ -368,7 +362,7 @@ end
   def display_list_of_entries(journal_entries_arr)
     puts `clear`
     journal_entries_arr.each_with_index { |journal, index|
-      puts("#{index + 1}.".colorize(:light_cyan) + " #{journal['title']}         " + "#{journal['date']}".colorize(:light_magenta))
+      puts("#{index + 1}.".colorize(:light_cyan) + " #{journal['title']}" + " " * 20 + "#{journal['date']}".colorize(:light_magenta))
     }
     puts
     puts("Type EXIT to return to main menu".colorize(:red))
@@ -402,8 +396,7 @@ end
       puts line
     }
 
-    puts
-    puts
+    2.times { puts } 
     puts("Mood: " + "#{journal['mood']}".colorize(:light_magenta))
     puts
     puts "Press enter to return to main menu...".colorize(:red)
@@ -430,12 +423,10 @@ end
   def read_mood_list_from_file()
     @mood_list = []
     
-    file = File.open("database/moods/#{@current_account}.txt", "r")
-    file.each_line { |line|
-      @mood_list << line.strip
+    File.open("database/moods/#{@current_account}.txt", "r").each_line { |line|
+      @mood_list << line
     }
-
-    file.close
+    
 
   end
 
@@ -446,16 +437,10 @@ end
     puts `clear`
 
     @journal_entries_arr.each { |journal|
-      if mood_hash[journal['mood']] == nil
-        mood_hash[journal['mood']] = 1
-      else
-        mood_hash[journal['mood']] += 1
-      end
+      mood_hash[journal['mood']] == nil ? mood_hash[journal['mood']] = 1 : mood_hash[journal['mood']] += 1
     }
 
-    sorted_mood_hash = mood_hash.sort_by { |mood, count| count}.reverse
-
-    sorted_mood_hash.each { |mood, count|
+    mood_hash.sort_by { |mood, count| count}.reverse.each { |mood, count|
       puts("#{mood}: #{count}")
     }
   end
@@ -465,7 +450,7 @@ end
     puts `clear`
 
     @journal_entries_arr.each_with_index { |journal, index|
-      puts("#{index + 1}.".colorize(:light_cyan) + " #{journal['title']}      " + "#{journal['date']}".colorize(:light_magenta))
+      puts("#{index + 1}.".colorize(:light_cyan) + " #{journal['title']}" + " " * 20 + "#{journal['date']}".colorize(:light_magenta))
     }
 
     puts()
@@ -540,138 +525,7 @@ end
     show_content_of_entry(selected_entry, filtered_array) if selected_entry != nil
   end
 
-  # Shutdown the program using a cool looking animation!
-  def shutdown
-    puts `clear`
-    puts("Thanks for using".colorize(:red))
-    puts ("                           _   _____ ____  ".colorize(:light_cyan))
-    sleep 0.2
-    puts ("                          | | |_   _/ __ \\ ".colorize(:light_cyan))
-    sleep 0.2
-    puts (" _ __ ___   ___   ___   __| |   | || |  | |".colorize(:light_cyan))
-    sleep 0.2
-    puts ("| '_ ` _ \\ / _ \\ / _ \\ / _` |   | || |  | |".colorize(:light_cyan))
-    sleep 0.2
-    puts ("| | | | | | (_) | (_) | (_| |_ _| || |__| |".colorize(:light_cyan)) 
-    sleep 0.2
-    puts ("|_| |_| |_|\\___/ \\___/ \\__,_(_)_____\\____/ ".colorize(:light_cyan))
-    puts
-    puts
-    sleep 0.2
-    puts(" _")
-    sleep 0.2
-    puts("|_)")
-    sleep 0.2
-    puts("|_)\\/")
-    sleep 0.2
-    puts("   /")
-    sleep 0.2
-    puts()
-    sleep 0.2
-    puts()
-    sleep 0.2
-    puts(" /\\ _| _.._ _  |  _. _| _ ||".colorize(:light_magenta))
-    sleep 0.2
-    puts("/--\(_|(_|| | | |_(_|(_|(/_||".colorize(:light_magenta))
-    sleep 0.2
-    puts
-    sleep 0.2
-    puts(" _            _".colorize(:blue))
-    sleep 0.2
-    puts("| \\ _.  o _| |_)   o".colorize(:blue))
-    sleep 0.2
-    puts("|_/(_|\\/|(_| |_)|_||".colorize(:blue))
-    sleep 0.5
-    puts
-    exit
-  end
-
-  def welcome_function()
-    message = "Welcome to mood.IO by Adam Ladell and David Bui"
-
-    words = message.split(' ')
-
-    # Go through each letter and print/ colorize it according to the rules for the overall word
-    words.each { |word|
-      letters = word.split('')
-      
-      letters.each { |letter|
-        print(letter.colorize(
-          case word
-          when "Welcome"
-            :red
-          when "mood.IO"
-            :light_cyan
-          when "Adam"
-            :light_magenta
-          when "Ladell"
-            :light_magenta
-          when "David"
-            :blue
-          when "Bui"
-            :blue
-          else
-            :default
-          end
-        ))
-        sleep 0.01
-      }
-      print ' '
-    }
-
-  end
-
 end
-
-def display_title_options()
-  options = ["Press 1 to Log In", "Press 2 to Sign Up", "Press 3 to Exit"]
-
-  words = []
-
-  # Go through each letter and print/ colorize it according to the rules for the overall word
-  options.each_with_index { |option|
-    words << option.split(' ')
-  }
-
-    words.each { |word_arr|
-      word_arr.each { |word|
-        letters = word.split('')
-        letters.each { |letter|
-          print(letter.colorize(
-            case word
-            when "Press"
-              :red
-            when "1"
-              :light_green
-            when "2"
-              :light_green
-            when "3"
-              :light_green
-            when "Log"
-              :light_cyan
-            when "In"
-              :light_cyan
-            when "Sign"
-              :light_cyan
-            when "Up"
-              :light_cyan
-            when "Exit"
-              :light_cyan
-            else
-              :default
-            end
-          ))
-          sleep 0.01
-        }
-        sleep 0.02
-        print(' ')
-      }
-      puts
-    }
-        
-end
-
-
 
 def main()
 
