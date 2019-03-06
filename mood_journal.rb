@@ -70,10 +70,10 @@ class Journal
   end
 
   def register_screen()
-    puts `clear`
-    puts ("mood.IO".colorize(:light_cyan).center(150))
-    puts
     while true
+      puts `clear`
+      puts ("mood.IO".colorize(:light_cyan).center(150))
+      puts
       puts("Type EXIT to return to previous menu")
       puts
       print("Enter username: ")
@@ -110,6 +110,7 @@ class Journal
         end
       else
         puts("Passwords don't match!".colorize(:red))
+        sleep 1.2
       end
     end
   end
