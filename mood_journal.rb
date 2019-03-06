@@ -183,11 +183,18 @@ end
       view_mood_list(mood_list)
     end
     
+    today = Time.now
+
+    hour = today.hour
+    minute = today.min
+    day = today.day
+    month = today.month
 
     return {
       title: title,
       content: lines,
-      mood: mood
+      mood: mood,
+      date: "#{day}/#{month} @ #{hour}:#{minute}"
     }
 
   end
@@ -195,7 +202,7 @@ end
 
   def add_journal_entry_to_arr(journal_entry)
     content = journal_entry[:content].join(';')
-    csv_text = "title,content,mood\n#{journal_entry[:title]},#{content},#{journal_entry[:mood]}"
+    csv_text = "title,content,mood,date\n#{journal_entry[:title]},#{content},#{journal_entry[:mood]},#{journal_entry[:date]}"
     csv_entry = CSV.parse(csv_text, :headers => true)
 
     csv_entry.each { |row|
@@ -261,7 +268,7 @@ end
 
   def save_journal_entries_arr_to_disk()
     File.open("journal_entries.csv", "w") do |file|
-      file.puts("title,content,mood")
+      file.puts("title,content,mood,date")
       @journal_entries_arr.each { |journal|
         file.puts(journal)
       }
@@ -282,7 +289,7 @@ end
   def display_list_of_entries(journal_entries_arr)
     puts `clear`
     journal_entries_arr.each_with_index { |journal, index|
-      puts("#{index + 1}. #{journal['title']}")
+      puts("#{index + 1}. #{journal['title']}         #{journal['date']}")
     }
     puts
     puts("Type EXIT to return to main menu")
@@ -374,7 +381,7 @@ end
     puts `clear`
 
     @journal_entries_arr.each_with_index { |journal, index|
-      puts("#{index + 1}. #{journal['title']}")
+      puts("#{index + 1}. #{journal['title']}      @ #{journal['date']}")
     }
 
     puts()
@@ -426,7 +433,10 @@ end
           selected_mood = mood_list[input.to_i - 1]
           break
         end
+      elsif input.upcase == "EXIT"
+        return
       end
+      
       puts("Please enter a valid mood!")
       print("Select the mood you'd like to filter (Type EXIT to return): ")
       input = gets.strip
