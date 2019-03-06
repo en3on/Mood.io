@@ -279,6 +279,7 @@ end
     puts("[1] Add Mood")
     puts("[2] Delete Mood")
     puts("[3] Return to Main Menu")
+    puts
 
     user_input = gets.strip
 
