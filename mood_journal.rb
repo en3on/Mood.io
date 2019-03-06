@@ -276,9 +276,9 @@ end
     puts
     valid_inputs = ["1", "2", "3"] 
 
-    puts("[1]".colorize(:red) + " Add Mood")
-    puts("[2]".colorize(:red) + " Delete Mood")
-    puts("[3]".colorize(:red) + " Exit")
+    puts("[1]".colorize(:light_cyan) + " Add Mood")
+    puts("[2]".colorize(:light_cyan) + " Delete Mood")
+    puts("[3]".colorize(:light_cyan) + " Exit")
     puts
 
     user_input = gets.strip
