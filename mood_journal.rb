@@ -71,6 +71,7 @@ class Journal
       password = gets().strip
       puts
 
+      # Check if user account exists 
       if File.exists?("database/journals/#{username}.csv")
         correct_password = File.read("database/passwords/#{username}.txt")
         if Digest::SHA2.hexdigest(password) == correct_password
@@ -103,10 +104,14 @@ def register_screen()
     password_again = gets.strip
     puts
 
+    # Check if the passwords match
     if password == password_again
+      # Check if a user with chosen username exists
       if File.exists?("database/journals/#{username}.csv")
         puts("Username is taken!".colorize(:red))
       else
+
+        # Create user files
 
         File.new("database/journals/#{username}.csv"   , "w")
         File.new("database/passwords/#{username}.txt"  , "w")
@@ -172,14 +177,18 @@ end
         # Display journal entry titles to user and allow them to delete a specific entry
         remove_journal_entry()
       when "4"
+        # Allow user to create / delete moods
         custom_mood()
       when "5"
+        # Allow user to see the most used moods
         get_most_used_moods() 
         puts("Press enter to return...".colorize(:light_cyan))
         gets
       when "6"
+        # Display journal entries with a certain mood
         filter_entries_by_mood()
       when "7"
+        # Close the app
         shutdown()
       else
         puts("Please enter a valid option!".colorize(:red))
@@ -231,6 +240,7 @@ end
       print("Choose a mood for this entry".colorize(:light_cyan) + " (Enter mood number): ".colorize(:red))
       input = gets.strip()
 
+      # If the input does not include numbers, or the number is not on the list, inform user and check again
       if input.count('0-9') == input.length
         if input.to_i <= mood_list.length && input.to_i > 0
           mood = mood_list[input.to_i - 1]
@@ -242,6 +252,8 @@ end
       puts
       view_mood_list(mood_list)
     end
+
+    # Get the date and time for the current entry
     
     today = Time.now
 
@@ -259,6 +271,7 @@ end
 
   end
 
+  # Add the journal entry specified to the class's local journal storage
 
   def add_journal_entry_to_arr(journal_entry)
     content = journal_entry[:content].join(';')
@@ -283,6 +296,8 @@ end
 
     user_input = gets.strip
 
+
+    # If the user's input is within the valid input list, then run a case statement to execute an option
     while !valid_inputs.include?(user_input)
       puts("Please enter a valid number!".colorize(:red))
       user_input = gets.strip
@@ -309,7 +324,7 @@ end
 
       while !valid_input
         delete_mood_input = gets().strip
-        if delete_mood_input.count('0-9') == delete_mood_input.length
+        if delete_mood_input.count('0-9') == delete_mood_input.length && delete_mood_input != "0"
           if delete_mood_input.to_i <= @mood_list.length
             @mood_list.delete_at(delete_mood_input.to_i - 1)
             break
@@ -327,6 +342,7 @@ end
     write_mood_list_to_file
   end
 
+  # Save the local journal storage to the file associated with the account
   def save_journal_entries_arr_to_disk()
     File.open("database/journals/#{@current_account}.csv", "w") do |file|
       file.puts("title,content,mood,date")
@@ -337,6 +353,7 @@ end
 
   end
 
+  # Read the journal entries for the specified user into the local journal storage
   def read_journal_entries_to_array()
     @journal_entries_arr = []
 
@@ -347,6 +364,7 @@ end
     }
   end
 
+  # Display the list of journal entries stored in the local journal storage (class array)
   def display_list_of_entries(journal_entries_arr)
     puts `clear`
     journal_entries_arr.each_with_index { |journal, index|
@@ -370,6 +388,7 @@ end
     end
   end
 
+  # Display the content of the specified journal entry
   def show_content_of_entry(user_selection, journal_entries_arr)
     journal = journal_entries_arr[user_selection - 1]
 
@@ -398,6 +417,7 @@ end
       end
   end
 
+  # Write the mood list for the user to their user moods file
   def write_mood_list_to_file()
     File.open("database/moods/#{@current_account}.txt", "w") do |file|
       @mood_list.each { |mood|
@@ -406,6 +426,7 @@ end
     end 
   end
 
+  # Read the mood list under the user's username
   def read_mood_list_from_file()
     @mood_list = []
     
@@ -418,6 +439,7 @@ end
 
   end
 
+  # Count the amount of times a mood was used by incrementing the moods value in a hash
   def get_most_used_moods()
     mood_hash = {}
 
@@ -438,6 +460,7 @@ end
     }
   end
 
+  # remove specified journal entry from list
   def remove_journal_entry()
     puts `clear`
 
@@ -452,7 +475,7 @@ end
       puts("Type EXIT to return to main menu".colorize(:red))
       print("Enter number of entry to remove: ".colorize(:light_cyan))
       entry_to_delete = gets.strip
-      if entry_to_delete.count('0-9') == entry_to_delete.length
+      if entry_to_delete.count('0-9') == entry_to_delete.length && entry_to_delete != "0"
         if entry_to_delete.to_i <= @journal_entries_arr.length
           break
         end
@@ -466,6 +489,8 @@ end
 
     @journal_entries_arr.delete_at(entry_to_delete.to_i - 1)
 
+    # delete the entry from the @journal_entries_arr and then write the changes to disk
+
     save_journal_entries_arr_to_disk
 
   end
@@ -475,6 +500,7 @@ end
 
     mood_list = []
 
+    # Iterate through each journal entry and only display the ones with the specified mood
     @journal_entries_arr.each { |journal|
       mood_list << journal['mood'] if !mood_list.include?(journal['mood'])
     }
@@ -510,9 +536,11 @@ end
     }
 
     selected_entry = display_list_of_entries(filtered_array)
+    # Show the content of the selected entry, unless the user typed "EXIT"
     show_content_of_entry(selected_entry, filtered_array) if selected_entry != nil
   end
 
+  # Shutdown the program using a cool looking animation!
   def shutdown
     puts `clear`
     puts("Thanks for using".colorize(:red))
@@ -563,6 +591,7 @@ end
 
     words = message.split(' ')
 
+    # Go through each letter and print/ colorize it according to the rules for the overall word
     words.each { |word|
       letters = word.split('')
       
@@ -599,6 +628,7 @@ def display_title_options()
 
   words = []
 
+  # Go through each letter and print/ colorize it according to the rules for the overall word
   options.each_with_index { |option|
     words << option.split(' ')
   }
@@ -648,12 +678,6 @@ def main()
   journal_app = Journal.new
 
   journal_app.title()
-
-  journal_app.read_mood_list_from_file()
-
-  journal_app.read_journal_entries_to_array
-
-  journal_app.main_menu()
 
 end
 
