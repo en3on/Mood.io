@@ -92,6 +92,7 @@ class Journal
         # Check if a user with chosen username exists
         if File.exists?("database/journals/#{username}.csv")
           puts("Username is taken!".colorize(:red))
+          sleep 1.2
         else
 
           # Create user files
