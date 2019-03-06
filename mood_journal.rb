@@ -180,7 +180,7 @@ end
       when "6"
         filter_entries_by_mood()
       when "7"
-        shudown()
+        shutdown()
       else
         puts("Please enter a valid option!")
         sleep 1
