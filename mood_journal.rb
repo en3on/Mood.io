@@ -115,12 +115,12 @@ def register_screen()
           file.print(Digest::SHA2.hexdigest(password))
         end
 
-        puts("Account Created!")
+        puts("Account Created!".colorize(:light_cyan))
         sleep 2
         title
       end
     else
-      puts("Passwords don't match!")
+      puts("Passwords don't match!".colorize(:red))
     end
   end
 end
@@ -175,14 +175,14 @@ end
         custom_mood()
       when "5"
         get_most_used_moods() 
-        puts("Press enter to return...")
+        puts("Press enter to return...".colorize(:light_cyan))
         gets
       when "6"
         filter_entries_by_mood()
       when "7"
         shutdown()
       else
-        puts("Please enter a valid option!")
+        puts("Please enter a valid option!".colorize(:red))
         sleep 1
       end
     end
@@ -190,15 +190,15 @@ end
 
   def get_journal_entry(mood_list)
     puts `clear`
-    puts("NEW JOURNAL ENTRY")
+    puts("NEW JOURNAL ENTRY".colorize(:light_cyan))
     puts
     puts
     # Get title for journal entry
-    print("Title: ")
+    print("Title: ".colorize(:light_magenta))
     title = gets.strip()
 
     puts()
-    puts("Journal Entry: (Type EXIT on a new line, to finish entry)")
+    puts("Journal Entry:".colorize(:light_cyan) + " (Type EXIT on a new line, to finish entry)".colorize(:red))
     puts
 
     input = ''
@@ -228,7 +228,7 @@ end
     
     valid_input = false
     while !valid_input
-      print("Choose a mood for this entry (Enter mood number): ")
+      print("Choose a mood for this entry".colorize(:light_cyan) + " (Enter mood number): ".colorize(:red))
       input = gets.strip()
 
       if input.count('0-9') == input.length
@@ -238,7 +238,7 @@ end
         end
       end
 
-      puts("Please enter a valid number!")
+      puts("Please enter a valid number!".colorize(:red))
       puts
       view_mood_list(mood_list)
     end
@@ -276,33 +276,33 @@ end
     puts
     valid_inputs = ["1", "2", "3"] 
 
-    puts("[1] Add Mood")
-    puts("[2] Delete Mood")
-    puts("[3] Return to Main Menu")
+    puts("[1]".colorize(:red) + " Add Mood")
+    puts("[2]".colorize(:red) + " Delete Mood")
+    puts("[3]".colorize(:red) + " Exit")
     puts
 
     user_input = gets.strip
 
     while !valid_inputs.include?(user_input)
-      puts("Please enter a valid number!")
+      puts("Please enter a valid number!".colorize(:red))
       user_input = gets.strip
     end
 
     case user_input
     when "1"
       puts `clear`
-      puts "Type your mood:"
+      puts "Type your mood:".colorize(:light_cyan)
       puts
       mood_input = gets().strip
 
-      !@mood_list.include?(mood_input.capitalize) ? @mood_list << mood_input.capitalize : (puts("That mood already exists!")
+      !@mood_list.include?(mood_input.capitalize) ? @mood_list << mood_input.capitalize : (puts("That mood already exists!".colorize(:red))
                                                                                            sleep 2
                                                                                           )
     when "2"
       puts `clear`
       view_mood_list(@mood_list)
       puts
-      puts "Type a mood that you want to delete:"
+      puts "Type a mood that you want to delete:".colorize(:light_cyan)
       puts
 
       valid_input = false
@@ -316,7 +316,7 @@ end
           end
         end
 
-        puts("Please enter a valid number!")
+        puts("Please enter a valid number!".colorize(:red))
 
       end
 
@@ -350,11 +350,11 @@ end
   def display_list_of_entries(journal_entries_arr)
     puts `clear`
     journal_entries_arr.each_with_index { |journal, index|
-      puts("#{index + 1}. #{journal['title']}         #{journal['date']}")
+      puts("#{index + 1}.".colorize(:light_cyan) + " #{journal['title']}         " + "#{journal['date']}".colorize(:light_magenta))
     }
     puts
-    puts("Type EXIT to return to main menu")
-    print("Please enter the number of the journal entry you would like to view: ")
+    puts("Type EXIT to return to main menu".colorize(:red))
+    print("Please enter the number of the journal entry you would like to view: ".colorize(:light_cyan))
     while true
       input = gets.strip
 
@@ -366,7 +366,7 @@ end
         return
       end
 
-      puts("Please enter a valid number!")
+      puts("Please enter a valid number!".colorize(:red))
     end
   end
 
@@ -376,7 +376,7 @@ end
     lines = journal['content'].split(';')
 
     puts `clear`
-    puts journal['title']
+    puts journal['title'].colorize(:light_cyan)
     puts
 
     lines.each { |line|
@@ -385,9 +385,9 @@ end
 
     puts
     puts
-    puts("Mood: #{journal['mood']}")
+    puts("Mood: " + "#{journal['mood']}".colorize(:light_magenta))
     puts
-    puts "Press enter to return to main menu..."
+    puts "Press enter to return to main menu...".colorize(:red)
     gets
   end
 
@@ -442,15 +442,15 @@ end
     puts `clear`
 
     @journal_entries_arr.each_with_index { |journal, index|
-      puts("#{index + 1}. #{journal['title']}      @ #{journal['date']}")
+      puts("#{index + 1}.".colorize(:light_cyan) + " #{journal['title']}      " + "#{journal['date']}".colorize(:light_magenta))
     }
 
     puts()
 
     valid_input = false
     while true
-      puts("Type EXIT to return to main menu")
-      print("Enter number of entry to remove: ")
+      puts("Type EXIT to return to main menu".colorize(:red))
+      print("Enter number of entry to remove: ".colorize(:light_cyan))
       entry_to_delete = gets.strip
       if entry_to_delete.count('0-9') == entry_to_delete.length
         if entry_to_delete.to_i <= @journal_entries_arr.length
@@ -481,7 +481,7 @@ end
 
     view_mood_list(mood_list)
     puts
-    print("Select the mood you'd like to filter (Type EXIT to return): ")
+    print("Select the mood you'd like to filter".colorize(:light_cyan) + " (Type EXIT to return): ".colorize(:red))
     input = gets.strip
 
     valid_input = false
@@ -498,8 +498,8 @@ end
         return
       end
       
-      puts("Please enter a valid mood!")
-      print("Select the mood you'd like to filter (Type EXIT to return): ")
+      puts("Please enter a valid mood!".colorize(:red))
+      print("Select the mood you'd like to filter".colorize(:light_cyan) + " (Type EXIT to return): ".colorize(:red))
       input = gets.strip
     end
 
