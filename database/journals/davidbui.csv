@@ -1,0 +1,4 @@
+title,content,mood,date
+{"title"=>"New Entry David", "content"=>"testDavid", "mood"=>"Happy", "date"=>"6/3 @ 12:24"}
+{"title"=>"Sad Davi", "content"=>nil, "mood"=>"Happy", "date"=>"6/3 @ 12:27"}
+{"title"=>"sad david true", "content"=>"SAD", "mood"=>"Sad", "date"=>"6/3 @ 12:27"}
