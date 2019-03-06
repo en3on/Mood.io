@@ -42,13 +42,16 @@ class Journal
       puts `clear`
       puts
       puts ("mood.IO".center(150))
+      puts("Type EXIT to return to previous menu")
       puts
       print ("Username: ".colorize(:light_cyan))
       username = gets().strip
+      title if username.upcase == "EXIT"
       puts
       print ("Password: ".colorize(:light_cyan))
       password = gets().strip
       puts
+
 
       # Check if user account exists 
       if File.exists?("database/journals/#{username}.csv")
@@ -71,8 +74,11 @@ class Journal
     puts ("mood.IO".colorize(:light_cyan).center(150))
     puts
     while true
+      puts("Type EXIT to return to previous menu")
+      puts
       print("Enter username: ")
       username = gets.strip
+      return if username.upcase == "EXIT"
       puts
       print("Enter password: ")
       password = gets.strip
@@ -99,7 +105,8 @@ class Journal
 
           puts("Account Created!".colorize(:light_cyan))
           sleep 2
-          title()
+          @current_account = username
+          main_menu
         end
       else
         puts("Passwords don't match!".colorize(:red))
