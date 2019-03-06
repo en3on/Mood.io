@@ -78,7 +78,7 @@ class Journal
       puts
       print("Enter username: ")
       username = gets.strip
-      return if username.upcase == "EXIT"
+      title if username.upcase == "EXIT"
       puts
       print("Enter password: ")
       password = gets.strip
