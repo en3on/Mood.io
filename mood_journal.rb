@@ -402,7 +402,10 @@ class Journal
           selected_mood = mood_list[input.to_i - 1]
           break
         end
+      elsif input.upcase == "EXIT"
+        return
       end
+      
       puts("Please enter a valid mood!")
       print("Select the mood you'd like to filter (Type EXIT to return): ")
       input = gets.strip
